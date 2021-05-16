@@ -1,0 +1,3 @@
+C:/Users/Tomek/CLionProjects/btree_with_cache/cmake-build-debug/CMakeFiles/btree_with_cache.dir
+C:/Users/Tomek/CLionProjects/btree_with_cache/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/Tomek/CLionProjects/btree_with_cache/cmake-build-debug/CMakeFiles/rebuild_cache.dir
