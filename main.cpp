@@ -1,5 +1,6 @@
-#include <iostream>
+#include  <iostream>
 #include <cstring>
+#include <conio.h>
 using namespace std;
 #define COMMAND_SIZE 4
 
@@ -315,12 +316,36 @@ int main() {
         } else if (!strcmp(choice, "L")) {
             string input;
             cin >> order;
-            while (getline(cin, input)) {
-                // do something with the line
-                cout << input << "\n";
+            // do something with the line
+            string element = "";
+            char c;
+            cin >> c;
+            int ob = 1, cb = 0;
+            while (ob > cb) {
+                c = (char)getchar();
+                if (c == '(' || c == ')' || c == ' ') {
+                    if (element.length() > 0) {
+                        insert(stoi(element), &root, MIN, MAX);
+                    }
+                    element = "";
+                } else element += c;
+                if (c == '(') ob++;
+                else if (c == ')') cb++;
             }
         } else if (!strcmp(choice, "S")) {
             // TODO
+            /*for (char i : input) {
+                cout << "CHAR:" << i << ":RAHC" << endl;
+                if (i == '\n' || i == '\0') break;
+                if (i == ' ' || i == '(' || i == ')') {
+                    //cout << "el lenght: " << element.length() << endl;
+                    if (element.length() > 0)
+                        cout << element << " " << element.length() << endl;
+                    //insert(stoi(element), &root, MIN, MAX);
+                    element = "";
+                }
+                else element += i;
+            }*/
         } else if (!strcmp(choice, "R")) {
             cin >> val;
             deleteN(val, &root, MIN);
