@@ -141,33 +141,6 @@ btree_with_cache/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\btree_with_cache.dir\build.make CMakeFiles/btree_with_cache.dir/build
 .PHONY : btree_with_cache/fast
 
-Node.obj: Node.cpp.obj
-
-.PHONY : Node.obj
-
-# target to build an object file
-Node.cpp.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\btree_with_cache.dir\build.make CMakeFiles/btree_with_cache.dir/Node.cpp.obj
-.PHONY : Node.cpp.obj
-
-Node.i: Node.cpp.i
-
-.PHONY : Node.i
-
-# target to preprocess a source file
-Node.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\btree_with_cache.dir\build.make CMakeFiles/btree_with_cache.dir/Node.cpp.i
-.PHONY : Node.cpp.i
-
-Node.s: Node.cpp.s
-
-.PHONY : Node.s
-
-# target to generate assembly for a file
-Node.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\btree_with_cache.dir\build.make CMakeFiles/btree_with_cache.dir/Node.cpp.s
-.PHONY : Node.cpp.s
-
 main.obj: main.cpp.obj
 
 .PHONY : main.obj
@@ -204,9 +177,6 @@ help:
 	@echo ... edit_cache
 	@echo ... rebuild_cache
 	@echo ... btree_with_cache
-	@echo ... Node.obj
-	@echo ... Node.i
-	@echo ... Node.s
 	@echo ... main.obj
 	@echo ... main.i
 	@echo ... main.s

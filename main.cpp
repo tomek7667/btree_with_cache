@@ -1,22 +1,20 @@
 #include <iostream>
 #include <cstring>
-
 using namespace std;
-#define COMMAND_SIZE 1
+#define COMMAND_SIZE 4
 
-
-#define MAX 3
-#define MIN 2
 
 struct Node {
-    int val[MAX + 1], count;
-    Node* link[MAX + 1];
+    int *val, count;
+    Node** link;
 };
 
 // Create a node
-Node* createNode(int val, Node* child, Node* root) {
+Node* createNode(int val, Node* child, Node* root, int MAX) {
     Node* newNode;
-    newNode = (Node*)malloc(sizeof(Node));
+    newNode = new Node;
+    newNode->val = new int[MAX + 1];
+    newNode->link = new Node*[MAX + 1];
     newNode->val[1] = val;
     newNode->count = 1;
     newNode->link[0] = root;
@@ -25,8 +23,7 @@ Node* createNode(int val, Node* child, Node* root) {
 }
 
 // Insert node
-void insertNode(int val, int pos, Node* node,
-                Node* child) {
+void insertNode(int val, int pos, Node* node, Node* child) {
     int j = node->count;
     while (j > pos) {
         node->val[j + 1] = node->val[j];
@@ -39,16 +36,15 @@ void insertNode(int val, int pos, Node* node,
 }
 
 // Split node
-void splitNode(int val, int* pval, int pos, Node* node,
-               Node* child, Node** newNode) {
+void splitNode(int val, int* pval, int pos, Node* node, Node* child, Node** newNode, int MIN, int MAX) {
     int median, j;
 
-    if (pos > MIN)
-        median = MIN + 1;
-    else
-        median = MIN;
+    if (pos > MIN) median = MIN + 1;
+    else median = MIN;
 
-    *newNode = (Node*)malloc(sizeof(Node));
+    *newNode = new Node;
+    (*newNode)->val = new int[MAX + 2];
+    (*newNode)->link = new Node*[MAX + 1];
     j = median + 1;
     while (j <= MAX) {
         (*newNode)->val[j - median] = node->val[j];
@@ -57,7 +53,6 @@ void splitNode(int val, int* pval, int pos, Node* node,
     }
     node->count = median;
     (*newNode)->count = MAX - median;
-
     if (pos <= MIN) {
         insertNode(val, pos, node, child);
     } else {
@@ -69,12 +64,11 @@ void splitNode(int val, int* pval, int pos, Node* node,
 }
 
 // Set the value
-int setValue(int val, int* pval,
-             Node* node, Node** child) {
+int setValue(int val, int* pval, Node* node, Node** child, int MIN, int MAX) {
     int pos;
     if (!node) {
         *pval = val;
-        *child = NULL;
+        *child = nullptr;
         return 1;
     }
 
@@ -87,11 +81,11 @@ int setValue(int val, int* pval,
             return 0;
         }
     }
-    if (setValue(val, pval, node->link[pos], child)) {
+    if (setValue(val, pval, node->link[pos], child, MIN, MAX)) {
         if (node->count < MAX) {
             insertNode(*pval, pos, node, *child);
         } else {
-            splitNode(*pval, pval, pos, node, *child, child);
+            splitNode(*pval, pval, pos, node, *child, child, MIN, MAX);
             return 1;
         }
     }
@@ -103,7 +97,7 @@ void copySuccessor(Node* node_del, int pos) {
     Node* dummy;
     dummy = node_del->link[pos];
 
-    for (; dummy->link[0] != NULL;)
+    for (; dummy->link[0] != nullptr;)
         dummy = dummy->link[0];
     node_del->val[pos] = dummy->val[1];
 }
@@ -124,7 +118,6 @@ void removeVal(Node* node_del, int pos) {
 void rightShift(Node* node_del, int pos) {
     Node* x = node_del->link[pos];
     int j = x->count;
-
     while (j > 0) {
         x->val[j + 1] = x->val[j];
         x->link[j + 1] = x->link[j];
@@ -132,62 +125,51 @@ void rightShift(Node* node_del, int pos) {
     x->val[1] = node_del->val[pos];
     x->link[1] = x->link[0];
     x->count++;
-
     x = node_del->link[pos - 1];
     node_del->val[pos] = x->val[x->count];
     node_del->link[pos] = x->link[x->count];
     x->count--;
-    return;
 }
 
 // Do left shift
 void leftShift(Node* node_del, int pos) {
     int j = 1;
     Node* x = node_del->link[pos - 1];
-
     x->count++;
     x->val[x->count] = node_del->val[pos];
     x->link[x->count] = node_del->link[pos]->link[0];
-
     x = node_del->link[pos];
     node_del->val[pos] = x->val[1];
     x->link[0] = x->link[1];
     x->count--;
-
     while (j <= x->count) {
         x->val[j] = x->val[j + 1];
         x->link[j] = x->link[j + 1];
         j++;
     }
-    return;
 }
 
 // Insert the value
-void insert(int val, Node** root) {
+void insert(int val, Node** root, int MIN, int MAX) {
     int flag, i;
     Node* child;
-
-    flag = setValue(val, &i, *root, &child);
-    if (flag) *root = createNode(i, child, *root);
+    flag = setValue(val, &i, *root, &child, MIN, MAX);
+    if (flag) *root = createNode(i, child, *root, MAX);
 }
-
 
 // Merge the nodes
 void mergeNodes(Node* node_del, int pos) {
     int j = 1;
     Node* x1 = node_del->link[pos], * x2 = node_del->link[pos - 1];
-
     x2->count++;
     x2->val[x2->count] = node_del->val[pos];
     x2->link[x2->count] = node_del->link[0];
-
     while (j <= x1->count) {
         x2->count++;
         x2->val[x2->count] = x1->val[j];
         x2->link[x2->count] = x1->link[j];
         j++;
     }
-
     j = pos;
     while (j < node_del->count) {
         node_del->val[j] = node_del->val[j + 1];
@@ -198,9 +180,8 @@ void mergeNodes(Node* node_del, int pos) {
     free(x1);
 }
 
-
 // Adjust the node
-void adjustNode(Node* node_del, int pos) {
+void adjustNode(Node* node_del, int pos, int MIN) {
     if (!pos) {
         if (node_del->link[1]->count > MIN) {
             leftShift(node_del, 1);
@@ -228,15 +209,14 @@ void adjustNode(Node* node_del, int pos) {
 }
 
 
-int delValFromNode(int val, Node* node_del) {
+int delValFromNode(int val, Node* node_del, int MIN) {
     int pos, flag = 0;
     if (node_del) {
         if (val < node_del->val[1]) {
             pos = 0;
             flag = 0;
         } else {
-            for (pos = node_del->count; (val < node_del->val[pos] && pos > 1); pos--)
-                ;
+            for (pos = node_del->count; (val < node_del->val[pos] && pos > 1); pos--);
             if (val == node_del->val[pos]) {
                 flag = 1;
             } else {
@@ -246,38 +226,37 @@ int delValFromNode(int val, Node* node_del) {
         if (flag) {
             if (node_del->link[pos - 1]) {
                 copySuccessor(node_del, pos);
-                flag = delValFromNode(node_del->val[pos], node_del->link[pos]);
+                flag = delValFromNode(node_del->val[pos], node_del->link[pos], MIN);
                 if (flag == 0) {
-
+                    cout << "Value does not exist in tree\n";
                     // no value in tree
                 }
             } else {
                 removeVal(node_del, pos);
             }
         } else {
-            flag = delValFromNode(val, node_del->link[pos]);
+            flag = delValFromNode(val, node_del->link[pos], MIN);
         }
         if (node_del->link[pos]) {
             if (node_del->link[pos]->count < MIN)
-                adjustNode(node_del, pos);
+                adjustNode(node_del, pos, MIN);
         }
     }
     return flag;
 }
 
 // Delete operaiton
-void deleteN(int item, Node** myNode) {
-    struct Node* tmp;
-    if (!delValFromNode(item, (*myNode))) {
+void deleteN(int item, Node** myNode, int MIN) {
+    Node* tmp;
+    if (!delValFromNode(item, (*myNode), MIN)) {
         return;
     } else {
         if ((*myNode)->count == 0) {
             tmp = (*myNode);
             (*myNode) = (*myNode)->link[0];
-            free(tmp);
+            delete tmp;
         }
     }
-    return;
 }
 
 // Search node
@@ -296,7 +275,6 @@ void search(int val, int* pos, Node* myNode, bool * found) {
         }
     }
     search(val, pos, myNode->link[*pos], found);
-    return;
 }
 
 // Traverse then nodes
@@ -313,15 +291,19 @@ void revSwitch(Node* myNode) {
 
 int main() {
     char choice[COMMAND_SIZE];
-    int val, ch;
-    Node* root = NULL;
+    int val, ch, MIN, MAX;
+    int order = 2;
+    Node* root = nullptr;
     while (cin >> choice) {
+        MIN = order - 1;
+        MAX = (2 * order) - 1;
+        //cout << "MIN: " << MIN << endl << "MAX: " << MAX << endl;
         if (!strcmp(choice, "I")) {
-            cin >> val;
-            // create tree of odrer 'val'
+            cin >> order;
+            // create tree of order
         } else if (!strcmp(choice, "A")) {
             cin >> val;
-            insert(val, &root);
+            insert(val, &root, MIN, MAX);
         } else if (!strcmp(choice, "?")) {
             cin >> val;
             bool found = false;
@@ -331,12 +313,17 @@ int main() {
             revSwitch(root);
             cout << endl;
         } else if (!strcmp(choice, "L")) {
-            // TODO
+            string input;
+            cin >> order;
+            while (getline(cin, input)) {
+                // do something with the line
+                cout << input << "\n";
+            }
         } else if (!strcmp(choice, "S")) {
             // TODO
         } else if (!strcmp(choice, "R")) {
             cin >> val;
-            deleteN(val, &root);
+            deleteN(val, &root, MIN);
         } else if (!strcmp(choice, "#")) {
             ;;
         } else if (!strcmp(choice, "X")) {

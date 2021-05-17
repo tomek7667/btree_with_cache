@@ -3,4 +3,4 @@ project(btree_with_cache)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(btree_with_cache main.cpp Node.cpp Node.h)
+add_executable(btree_with_cache main.cpp)

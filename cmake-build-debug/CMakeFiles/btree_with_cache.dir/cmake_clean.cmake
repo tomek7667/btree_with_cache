@@ -1,5 +1,4 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/btree_with_cache.dir/Node.cpp.obj"
   "CMakeFiles/btree_with_cache.dir/main.cpp.obj"
   "btree_with_cache.exe"
   "btree_with_cache.exe.manifest"
