@@ -39,10 +39,8 @@ void insertNode(int val, int pos, Node* node, Node* child) {
 // Split node
 void splitNode(int val, int* pval, int pos, Node* node, Node* child, Node** newNode, int MIN, int MAX) {
     int median, j;
-
     if (pos > MIN) median = MIN + 1;
     else median = MIN;
-
     *newNode = new Node;
     (*newNode)->val = new int[MAX + 2];
     (*newNode)->link = new Node*[MAX + 1];
@@ -95,12 +93,11 @@ int setValue(int val, int* pval, Node* node, Node** child, int MIN, int MAX) {
 
 // Copy the successor
 void copySuccessor(Node* node_del, int pos) {
-    Node* dummy;
-    dummy = node_del->link[pos];
-
-    for (; dummy->link[0] != nullptr;)
-        dummy = dummy->link[0];
-    node_del->val[pos] = dummy->val[1];
+    Node* temp;
+    temp = node_del->link[pos];
+    for (; temp->link[0] != nullptr;)
+        temp = temp->link[0];
+    node_del->val[pos] = temp->val[1];
 }
 
 // Remove the value
@@ -115,7 +112,7 @@ void removeVal(Node* node_del, int pos) {
 }
 
 
-// Do right shift
+// Do right shift on pointers
 void rightShift(Node* node_del, int pos) {
     Node* x = node_del->link[pos];
     int j = x->count;
@@ -132,7 +129,7 @@ void rightShift(Node* node_del, int pos) {
     x->count--;
 }
 
-// Do left shift
+// Do left shift on pointers
 void leftShift(Node* node_del, int pos) {
     int j = 1;
     Node* x = node_del->link[pos - 1];
@@ -340,6 +337,13 @@ int main() {
             }
             delete element;
         } else if (!strcmp(choice, "S")) {
+            cout << "MAX: " << MAX << endl;
+            cout << "MIN: " << MIN << endl;
+            while ((*root->link) != nullptr) {
+                cout << "ASD:" << root->val[1] << endl;
+                root = (*root->link);
+
+            }
             // TODO
         } else if (!strcmp(choice, "R")) {
             cin >> val;
