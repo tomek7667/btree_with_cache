@@ -1,8 +1,8 @@
 #include  <iostream>
 #include <cstring>
-#include <conio.h>
 using namespace std;
-#define COMMAND_SIZE 4
+#define COMMAND_SIZE 1
+#define INPUT_MAX_SIZE 2048
 
 
 struct Node {
@@ -314,38 +314,33 @@ int main() {
             revSwitch(root);
             cout << endl;
         } else if (!strcmp(choice, "L")) {
-            string input;
             cin >> order;
             // do something with the line
-            string element = "";
+            char *element = new char[INPUT_MAX_SIZE];
+            int iterator = 0;
             char c;
             cin >> c;
             int ob = 1, cb = 0;
             while (ob > cb) {
                 c = (char)getchar();
                 if (c == '(' || c == ')' || c == ' ') {
-                    if (element.length() > 0) {
-                        insert(stoi(element), &root, MIN, MAX);
+                    if (iterator > 0) {
+                        insert(atoi(element), &root, MIN, MAX);
                     }
-                    element = "";
-                } else element += c;
+                    for (int i = 0; i < iterator; i++) {
+                        element[iterator] = ' ';
+                    }
+                    iterator = 0;
+                } else {
+                    element[iterator] = c;
+                    iterator++;
+                }
                 if (c == '(') ob++;
                 else if (c == ')') cb++;
             }
+            delete element;
         } else if (!strcmp(choice, "S")) {
             // TODO
-            /*for (char i : input) {
-                cout << "CHAR:" << i << ":RAHC" << endl;
-                if (i == '\n' || i == '\0') break;
-                if (i == ' ' || i == '(' || i == ')') {
-                    //cout << "el lenght: " << element.length() << endl;
-                    if (element.length() > 0)
-                        cout << element << " " << element.length() << endl;
-                    //insert(stoi(element), &root, MIN, MAX);
-                    element = "";
-                }
-                else element += i;
-            }*/
         } else if (!strcmp(choice, "R")) {
             cin >> val;
             deleteN(val, &root, MIN);
