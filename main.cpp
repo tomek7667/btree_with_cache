@@ -342,7 +342,6 @@ int main() {
             while ((*root->link) != nullptr) {
                 cout << "ASD:" << root->val[1] << endl;
                 root = (*root->link);
-
             }
             // TODO
         } else if (!strcmp(choice, "R")) {
